@@ -1,4 +1,4 @@
-/* 
- * THis is a package name
- */
+/**
+* This is a sample comment
+*/
 package com.example;
