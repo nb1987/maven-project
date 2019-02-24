@@ -1,9 +1,13 @@
 pipeline {
     agent any 
+
+    tools {
+        maven 'localMaven'
+    }
+    
     stages {
         stage ('Build') {
             steps {
-                sh 'export PATH=$PATH:/Users/bagnalln/Documents/apache-maven-3.6.0/bin'
                 sh 'mvn clean package'
             }
             post {
