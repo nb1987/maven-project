@@ -1,41 +1,36 @@
 pipeline {
-    agent any 
+    agent any
 
-    tools {
-        maven 'installedMaven'
+    parameters {
+        string(
+            name: 'tomcat_staging', 
+            defaultValue: '174.129.181.153', 
+            description: 'Staging Server'
+        )
+        string(
+            name: 'tomcat_prod', 
+            defaultValue: '3.88.85.130', 
+            description: 'Production Server'
+        ) 
+    }
+
+    triggers {
+        pollSCM('* * * * *')
     }
 
     stages {
-        stage ('Build') {
-            steps {
-                sh 'mvn clean package'
-            }
-            post {
-                success {
-                    echo 'Now archiving...'
-                    archiveArtifacts artifacts: '**/target/*.war'
+        stage('Deployments') {
+            parallel {
+                stage('Deploy to Staging') {
+                    steps {
+                        sh 'scp -i ~/Downloads/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_staging}:/var/lib/tomcat7/webapps'
+                    }
                 }
-            }
-        }
-        stage ('Deploy to Staging') {
-            steps {
-                build job: 'deploy-to-staging'
-            }
-        }
-        stage ('Deploy to Prod') {
-            steps {
-                timeout(time: 5, unit: 'DAYS') {
-                    input message: 'Approve PROD Deployment?'
-                }
-                /* in event of approval, deploy-to-prod will run */
-                build job: 'deploy-to-prod'
-            }
-            post {
-                success {
-                    echo 'Code deployed to production'
-                }
-                failure {
-                    echo 'OH NOES! Deployment FAILED!'
+
+                stage('Deploy to Production') {
+                    steps {
+                        sh 'scp -i ~/Downloads/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps'
+                    }
                 }
             }
         }
