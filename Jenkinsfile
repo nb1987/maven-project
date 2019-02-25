@@ -4,12 +4,12 @@ pipeline {
     parameters {
         string(
             name: 'tomcat_staging', 
-            defaultValue: '174.129.181.153', 
+            defaultValue: '3.87.9.82', 
             description: 'Staging Server'
         )
         string(
             name: 'tomcat_prod', 
-            defaultValue: '3.88.85.130', 
+            defaultValue: '18.212.6.198', 
             description: 'Production Server'
         ) 
     }
@@ -45,7 +45,7 @@ pipeline {
 
                 stage('Deploy to Production') {
                     steps {
-                        sh "scp -i ~/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                        sh "scp -i ~/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/opt/tomcat/webapps"
                     }
                 }
             }
