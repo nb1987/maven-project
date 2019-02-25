@@ -14,6 +14,10 @@ pipeline {
         ) 
     }
 
+    tools {
+        maven 'installedMaven'
+    }
+
     triggers {
         pollSCM('* * * * *')
     }
@@ -30,7 +34,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Deployments') {
             parallel {
                 stage('Deploy to Staging') {
