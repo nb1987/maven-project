@@ -26,29 +26,9 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'mvn clean package'
-            }
-            post {
-                success {
-                    echo 'Now Archiving...'
-                    archiveArtifacts artifacts: '**/target/*.war'
-                }
+                sh "docker build . -t tomcatwebapp:${env.BUILD_ID}"
             }
         }
 
-        stage('Deployments') {
-            parallel {
-                stage('Deploy to Staging') {
-                    steps {
-                        sh "scp -i ~/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_staging}:/opt/tomcat/webapps"
-                    }
-                }
-
-                stage('Deploy to Production') {
-                    steps {
-                        sh "scp -i ~/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/opt/tomcat/webapps"
-                    }
-                }
-            }
-        }
     }
 }
