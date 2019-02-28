@@ -27,7 +27,7 @@ pipeline {
             steps {
                 sh 'echo $PATH'
                 sh 'mvn clean package'
-                sh "docker build . -t tomcatwebapp:${env.BUILD_ID}"
+                sh "sudo docker build . -t tomcatwebapp:${env.BUILD_ID}"
             }
         }
 
